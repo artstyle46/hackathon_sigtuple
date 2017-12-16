@@ -41,6 +41,9 @@ key_mapping = {
 
 def index(request):
     context = {}
+    if request.method == 'POST':
+        file = request.FILES.get('report')
+        file_path = handle_uploaded_file(file)
     # for key in HIST_KEYS:
     #     context[key] = _chart_data_provider(data_json, key)
     # context[ref_range] = {}
