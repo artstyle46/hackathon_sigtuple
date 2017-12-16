@@ -4,8 +4,25 @@
 
 /* Move down content because we have a fixed navbar that is 3.5rem tall */
 body {
-  padding-top: 3.5rem;
   margin: 0;
+}
+
+.btn-class-1 {
+    padding: 7px 10px;
+    background-color: white;
+    border-radius: 5px;
+    width: 250px;
+    margin-right: 10px;
+}
+.btn-class-1 {
+    background-color: white;
+    border-radius: 5px;
+    width: 250px;
+    margin-right: 10px;
+}
+
+.sub-btn {
+    padding: 8px 30px;
 }
 
 /*
@@ -61,17 +78,24 @@ h1 {
     margin-left: 35px;
 }
 
+.bg-color-white {
+    background-color: transparent !important;
+}
+
 .sidebar {
-    width: 25%;
-    position: fixed;
+    position: fixed !important;
     right: 5px;
-    top: 50px;
-    padding-top: 100px;
+    top: 0px;
   z-index: 1000;
   padding: 20px 0;
   overflow-x: hidden;
   overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
   border-right: 1px solid #eee;
+  padding-top: 80px;
+width: 25%;
+background-color: #343a40;
+right: 0px;
+min-height: 100vh !important;
 }
 
 .sidebar .nav {
