@@ -1,0 +1,50 @@
+import datetime
+from django.contrib.gis.db import models
+# Create your models here.
+
+
+#Serial Number	Age	Gender	WBC(10^3/uL)	RBC(10^6/uL)	HGB(g/dL)	HCT(%)	Platelets	MCV(fL)	MCH(pg)	MCHC(g/dL)
+# NEUT#(10^3/uL)	LYMPH#(10^3/uL)	MONO#(10^3/uL)	EO#(10^3/uL)	BASO#(10^3/uL)	NEUT%(%)	LYMPH%(%)	MONO%(%)
+# EO%(%)	BASO%(%)	RDW-CV(%)
+
+class CbcReport(models.Model):
+    gender = models.CharField(max_length=10)
+    age = models.IntegerField()
+    wbc_tc = models.FloatField()
+    wbc_tc_unit = models.CharField(max_length=10)
+    rbc_tc = models.FloatField()
+    rbc_tc_unit = models.CharField(max_length=10)
+    haemoglobin = models.FloatField()
+    haemoglobin_unit = models.CharField(max_length=10)
+    hct = models.FloatField()
+    hct_unit = models.CharField(max_length=10)
+    platelets_tc = models.FloatField()
+    platelets_unit = models.CharField(max_length=10)
+    mcv = models.FloatField()
+    mcv_unit = models.CharField(max_length=10)
+    mch = models.FloatField()
+    mch_unit = models.CharField(max_length=10)
+    mchc = models.FloatField()
+    mchc_unit = models.CharField(max_length=10)
+    neutrophil_tc = models.FloatField()
+    neutrophil_tc_unit = models.CharField(max_length=10)
+    lymphocyte_tc = models.FloatField()
+    lymphocyte_tc_unit = models.CharField(max_length=10)
+    monocyte_tc = models.FloatField()
+    monocyte_tc_unit = models.CharField(max_length=10)
+    eosinophil_tc = models.FloatField()
+    eosinophil_tc_unit = models.CharField(max_length=10)
+    basophil_tc = models.FloatField()
+    basophil_tc_unit= models.CharField(max_length=10)
+    neutrophil_dc = models.FloatField()
+    lymphocyte_dc = models.FloatField()
+    monocyte_dc = models.FloatField()
+    eosinophil_dc = models.FloatField()
+    basophil_dc = models.FloatField()
+    rdw_cv = models.FloatField()
+    upload_time = models.DateTimeField(default=datetime.datetime.now)
+    location = models.PolygonField()
+
+class ReferenceRange(models.Model):
+    location = models.PolygonField()
+    age = models.FloatField()
