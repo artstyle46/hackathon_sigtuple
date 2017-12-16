@@ -13,15 +13,29 @@
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/histogram-bellcurve.js"></script>
     <script src="{% static 'js/charts.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dc.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/shCore.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/shThemeDefault.css' %}"/>
+<script type="text/javascript" src="{% static 'js/dc.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/d3.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/crossfilter.js' %}"></script>
+
 </head>
 
 <script>
     $(document).ready(function(){
     $("#k-chart").click(function(){
         $("#frame").css("display", "block");
+        $("#frame2").css("display", "None");
+        $("#main-class").css("display", "none");
+    });
+    $("#c-chart").click(function(){
+        $("#frame").css("display", "None");
+        $("#frame2").css("display", "block");
         $("#main-class").css("display", "none");
     });
 });
+
 </script>
 
  <body>
@@ -37,6 +51,10 @@
         <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
+          <a class="navbar-brand" id="c-chart" href="#">Custom Chart</a>
+        <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
           <form class="form-inline mt-2 mt-md-0 form-left" action="report" enctype="multipart/form-data" method="post">{% csrf_token %}
               <span class="btn btn-default btn-file" style="color: white "><input type="file" id="report" name="report" accept=".csv" /></span>
@@ -46,6 +64,9 @@
     </header>
     <div class="hide-class" style="margin-top: 30px" id="frame">
         <iframe height="766" frameborder="0" width="100%" src="http://drishtigpu00.southcentralus.cloudapp.azure.com:6007/knowledge-charts/"></iframe>
+    </div>
+    <div class="hide-class" style="margin-top: 30px" id="frame2">
+        <iframe height="766" frameborder="0" width="100%" src="http://drishtigpu00.southcentralus.cloudapp.azure.com:6007/custom-knowledge/"></iframe>
     </div>
     <div class="container-fluid show-class" id="main-class">
       <div class="row">
@@ -57,75 +78,31 @@
               {% for i in chart_looper %}
 
             <div class="col-md-5 col-sm-5 placeholder">
-                <div id="{{i.name}}" class="container"></div>
+                <div id="{{i}}" class="container"></div>
                 <script>
-    var data = {{i.data}};
+                var rbcChart = dc.barChart("#{{i}}");
+                var hackdata = crossfilter({{hack_data|safe}});
+                    var rbc = hackdata.dimension(function (d) {
+                return d.{{i}};
+            });
+            var rbcGroup = rbc.group();
 
-var chart = Highcharts.chart('{{i.name}}', {
-    title: {
-        text: '{{i.name}} comparison'
-    },
-    xAxis: [{
-        title: { text: 'Data' }
-    }, {
-        title: { text: 'Histogram' },
-        opposite: true
-    }],
-
-    yAxis: [{
-        title: { text: 'Data' }
-    }, {
-        title: { text: 'Histogram' },
-        opposite: true
-    }],
-
-    series: [{
-        name: 'Histogram',
-        type: 'histogram',
-        xAxis: 1,
-        yAxis: 1,
-        baseSeries: 's1',
-        zIndex: -1
-    }, {
-        name: 'Data',
-        type: 'scatter',
-        data: data,
-        id: 's1',
-        marker: {
-            radius: 4
-        }
-    }],
-    plotOptions: {
-        series: {
-            allowPointSelect: false,
-            point: {
-                events: {
-                    select: function () {
-                            chart = this.series.chart;
-                        if (!chart.lbl) {
-                            chart.lbl = chart.renderer.label(text, 100, 70)
-                                .attr({
-                                    padding: 10,
-                                    r: 5,
-                                    fill: Highcharts.getOptions().colors[1],
-                                    zIndex: 5
-                                })
-                                .css({
-                                    color: '#FFFFFF'
-                                })
-                                .add();
-                        } else {
-                            chart.lbl.attr({
-                                text: text
-                            });
-                        }
-                    }
-                }
-            }
-        }
-    }
-});
-    </script>
+            rbcChart.width(250)
+            .height(150)
+            .margins({top: 10, right: 50, bottom: 30, left: 40})
+            .dimension(rbc)
+            .group(rbcGroup)
+            .elasticY(true)
+            .centerBar(true)
+            .gap(-1)
+            .round(dc.round.floor)
+            .x(d3.scale.linear().domain([0, 10]))
+            .renderHorizontalGridLines(true)
+            .xAxis()
+            .tickFormat(function (v) {
+                return v + "";
+            });
+                </script>
               <h4>{{i.name}}</h4>
               <span class="text-muted"></span>
             </div>
@@ -140,7 +117,7 @@ var chart = Highcharts.chart('{{i.name}}', {
                     <th>Keys</th>
                   <th>Report</th>
                   <th>Reference-Range</th>
-                  <th>Score</th>
+                  <th>last_report</th>
                     <!--TODO: previous records-->
                 </tr>
               </thead>
@@ -149,9 +126,9 @@ var chart = Highcharts.chart('{{i.name}}', {
 
                 <tr>
                     <td>{{o.name}}</td>
-                  <td>{{o.value.0}}</td>
+                  <td>{{o.value}}</td>
                   <td>{{o.ref_range}}</td>
-                  <td>{{o.score}}</td>
+                  <td>{{o.last_value}}</td>
                 </tr>
               {% endfor %}
               </tbody>
@@ -169,7 +146,7 @@ var chart = Highcharts.chart('{{i.name}}', {
               <a class="nav-link" href="#">Reports</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Analytics</a>
+              <a class="nav-link" href="#">{{a}}</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">Export</a>
