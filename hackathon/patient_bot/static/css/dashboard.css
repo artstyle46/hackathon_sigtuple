@@ -3,6 +3,13 @@
  */
 
 /* Move down content because we have a fixed navbar that is 3.5rem tall */
+.logo {
+    float: left;
+}
+
+.header-right, .header-right .right{ float: right }
+.header-right .right span{ margin-left: 20px }
+
 body {
   margin: 0;
 }
